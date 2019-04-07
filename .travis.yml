@@ -1,0 +1,18 @@
+sudo: required
+dist: trusty
+language: julia
+os: linux
+compiler: mpicc
+julia: 0.5
+notifications:
+  email: false
+env:
+  - JULIA_NUM_THREADS=2
+    MPICH_CC=gcc
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y mpich libmpich-dev
+script:
+  - julia -e 'Pkg.clone(pwd()); Pkg.build("Dtree")'
+  - mpiexec.hydra -np 4 julia --depwarn=no test/dtreebench.jl
+
